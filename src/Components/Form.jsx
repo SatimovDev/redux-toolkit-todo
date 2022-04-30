@@ -12,7 +12,8 @@ export const Form = () => {
 
         const todo = {
             id:Date.now(),
-            text:value,
+            title:value,
+            completed:false        
         }
         dispatch(createTodo(todo))
     }

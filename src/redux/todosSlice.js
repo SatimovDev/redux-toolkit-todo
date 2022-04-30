@@ -1,4 +1,10 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice , createAsyncThunk} from "@reduxjs/toolkit";
+
+const getTodos = createAsyncThunk('getTodos', async () => {
+    let response = await fetch('https://jsonplaceholder.typicode.com/todos?_start=0&_limit=5')
+    let data =await response.json()
+    return data
+})
 
 export const todosSlice = createSlice({
    name:'todos',
@@ -10,9 +16,23 @@ export const todosSlice = createSlice({
        deleteTodo: (state , action) => {    
         let todos = state.filter(todo => todo.id !== action.payload)
         return todos
+       },
+       toggleTodo: (state, action) => {
+        state.map(todo => {
+            if(todo.id === action.payload){
+               return ( todo.completed = !todo.completed)
+            }
+            return todo
+        })
        }
-   } 
+   } ,
+   extraReducers:(builder) => {
+       builder.addCase(getTodos.fulfilled, (state, action) => {
+           return [...state , ...action.payload]
+       })
+   }
 })
 
-export const { createTodo, deleteTodo} = todosSlice.actions
+export const { createTodo, deleteTodo , toggleTodo} = todosSlice.actions
+export {getTodos};
 export default todosSlice.reducer
